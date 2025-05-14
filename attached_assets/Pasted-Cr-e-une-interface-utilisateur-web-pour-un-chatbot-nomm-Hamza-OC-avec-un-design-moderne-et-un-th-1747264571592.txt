@@ -1,0 +1,56 @@
+Crée une interface utilisateur web pour un chatbot nommé "Hamza.OC", avec un design moderne et un thème sombre, en utilisant HTML, CSS, et JavaScript. L'interface doit inclure les fonctionnalités et éléments suivants :
+
+Structure générale :
+Utilise une mise en page flexbox avec une barre latérale (sidebar) et une zone de chat principale.
+La sidebar doit être fixée à droite de l’écran, avec une largeur de 250px, et s’ouvrir/fermer en glissant vers la gauche (cachée par défaut, visible quand activée).
+Un bouton de toggle, positionné en haut à droite (1rem de la bordure), doit activer/désactiver la sidebar et se déplacer avec elle (à 251px de la bordure droite quand ouvert).
+La zone de chat principale doit occuper le reste de l’écran et inclure un en-tête fixe en haut, une zone de messages, et une section d’entrée en bas.
+Design et style :
+Thème sombre avec des couleurs : fond principal (#1e1e2f), sidebar (#111827), messages utilisateur (#2d2d44), messages bot (#374151), texte principal (#e5e7eb), texte secondaire (#9ca3af), couleur primaire (#6366f1).
+Ajoute des animations fluides : transition de 0.3s pour le mouvement de la sidebar et du bouton, effet fade-in (0.3s) pour les messages.
+Utilise des icônes FontAwesome pour les boutons (ex. : bars, plus, paper-plane, search, brain, image, ghost, edit).
+Sidebar (Historique des chats) :
+Inclut un en-tête avec "Discussions" et un bouton "Nouveau Chat" (icône plus) pour créer un nouveau chat.
+Affiche une liste d’historique des chats, chaque élément étant un item cliquable avec un nom (par défaut "Nouveau chat" ou personnalisé) et un bouton de renommage (icône crayon).
+Permet de renommer un chat : clic sur l’icône ouvre un champ d’entrée, soumission par "Enter" ou perte de focus envoie une requête pour mettre à jour le nom via une API.
+L’item actif (chat actuel) doit être mis en surbrillance avec la couleur primaire.
+En-tête du chat :
+Fixé en haut, affiche "Hamza.OC" à gauche et un bouton "Messages éphémères" (icône fantôme) à droite.
+Le bouton "Messages éphémères" bascule un état (actif avec couleur primaire) et envoie une requête API pour activer/désactiver l’expiration des messages (5 minutes).
+L’en-tête suit le mouvement de la sidebar, ajustant sa position (2rem de la bordure droite quand sidebar ouverte, sinon calculée avec la largeur de la sidebar).
+Zone de messages :
+Centrée horizontalement avec une largeur maximale de 800px (80% de la largeur de l’écran).
+Affiche un message de bienvenue "Comment puis-je vous aider ?" centré verticalement et horizontalement au départ, qui disparaît après le premier message (utilisateur ou image) et réapparaît pour chaque nouveau chat.
+Chaque message est dans un cadre séparé (background, padding 1rem, border-radius 10px, box-shadow léger) avec un avatar (36x36px, rond) à gauche :
+Avatar utilisateur : fond vert (#34d399), icône utilisateur.
+Avatar bot : fond primaire (#6366f1), icône robot.
+Les messages s’ajoutent avec un effet fade-in, et un indicateur "tape..." (animation de points) pour les réponses en cours.
+Section d’entrée :
+Contient une textarea auto-redimensionnable (min-height 50px, max-height 200px) centrée avec une largeur maximale de 800px (80% de l’écran), et un bouton d’envoi (icône avion) à droite.
+Inclut trois boutons sous la textarea : "DeepSearch" (icône loupe), "DeepThink" (icône cerveau), "Image" (icône image avec input file caché).
+Les boutons "DeepSearch" et "DeepThink" basculent un état actif (couleur primaire) pour activer les modes correspondants.
+L’input file permet d’uploader des images, affichant "Image ajoutée" comme message utilisateur.
+Fonctionnalités JavaScript :
+Toggle sidebar : Le clic sur le bouton ouvre/ferme la sidebar et ajuste l’en-tête.
+Nouveau chat : Envoi d’une requête POST à /chat avec {new_chat: true}, initialise un nouveau chat_id, recharge l’historique, et affiche le message de bienvenue.
+Historique : Charge dynamiquement via GET /chat_history, chaque item déclenche un chargement des messages via GET /chat_messages?chat_id={chat_id} et met à jour l’item actif.
+Envoi de message : POST à /chat avec le message, les états DeepSearch/DeepThink, l’image (si présente), et le chat_id. Gère les réponses :
+Mode 1 : Affiche directement la réponse.
+Mode 2 : Ouvre une popup avec "Je suis pas encore au courant de ces concepts, voulez-vous que je cherche ailleurs ?" et boutons "Oui"/"Non" pour confirmer.
+Popup Mode 2 : Modal centré avec overlay, boutons envoyant "Y" ou "N" via une nouvelle requête POST.
+Messages éphémères : Bascule via POST /toggle_ephemeral et affiche une confirmation.
+Renommage : Ouvre un input sur clic de l’icône, envoie POST /rename_chat avec le nouveau nom.
+Intégration backend :
+Utilise une API Flask avec des endpoints :
+/ : Rend index.html avec un chat_id initial.
+/chat : Gère les messages (POST avec mode, confirmation, image).
+/chat_history : Retourne la liste des chats.
+/chat_messages : Retourne les messages d’un chat_id.
+/toggle_ephemeral : Active/désactive les messages éphémères.
+/rename_chat : Met à jour le nom d’un chat.
+Connecte à une base de données Firestore pour stocker chats et messages.
+Comportement spécifique :
+Le message de bienvenue réapparaît pour chaque nouveau chat ou sélection d’un chat sans messages.
+Les anciens chats restent accessibles dans la sidebar après création d’un nouveau.
+Les messages sont centrés et séparés par des cadres distincts.
+Génère le code HTML, CSS, et JavaScript correspondant, en respectant les spécifications ci-dessus, avec des commentaires clairs pour chaque section. Assure-toi que le code est fonctionnel et prêt à être intégré dans un projet Flask avec Firestore.
