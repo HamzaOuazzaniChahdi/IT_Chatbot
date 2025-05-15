@@ -6,6 +6,19 @@ from flask import Flask, render_template, request, jsonify, session
 import firebase_admin
 from firebase_admin import credentials, firestore
 
+# Create fallback constants for when using the in-memory storage
+class MockFirestore:
+    SERVER_TIMESTAMP = datetime.datetime.now()
+    
+    class Query:
+        DESCENDING = "DESCENDING"
+
+# Use the real Firestore if available, otherwise use our mock
+try:
+    FIRESTORE = firestore
+except NameError:
+    FIRESTORE = MockFirestore
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -15,16 +28,108 @@ app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key")
 
 # Initialize Firestore DB
 try:
-    # Use the application default credentials or environment variable
-    cred = credentials.ApplicationDefault()
-    firebase_admin.initialize_app(cred, {
-        'projectId': os.environ.get('FIRESTORE_PROJECT_ID', 'hamza-oc-chatbot'),
-    })
+    # Check if Firebase is already initialized to avoid re-initialization errors
+    if not firebase_admin._apps:
+        # Try to use application default credentials first
+        try:
+            cred = credentials.ApplicationDefault()
+            firebase_admin.initialize_app(cred, {
+                'projectId': os.environ.get('FIRESTORE_PROJECT_ID', 'hamza-oc-chatbot'),
+            })
+        except Exception as credential_error:
+            logging.warning(f"Could not use application default credentials: {credential_error}")
+            # Fall back to using a local demo mode with a memory store for development
+            firebase_admin.initialize_app()
+    
     db = firestore.client()
     logging.info("Successfully connected to Firestore")
 except Exception as e:
     logging.error(f"Error connecting to Firestore: {e}")
-    db = None
+    # Set up an in-memory mock for development purposes
+    class InMemoryDB:
+        def __init__(self):
+            self.data = {
+                'chats': {},
+                'messages': {}
+            }
+            logging.info("Initialized in-memory database")
+        
+        def collection(self, collection_name):
+            return InMemoryCollection(self, collection_name)
+    
+    class InMemoryCollection:
+        def __init__(self, db, collection_name):
+            self.db = db
+            self.collection_name = collection_name
+        
+        def document(self, doc_id):
+            return InMemoryDocument(self.db, self.collection_name, doc_id)
+        
+        def order_by(self, field, direction=None):
+            return self
+        
+        def stream(self):
+            if self.collection_name == 'chats':
+                docs = []
+                for chat_id, chat_data in self.db.data['chats'].items():
+                    docs.append(InMemoryDocSnapshot(chat_id, chat_data))
+                return docs
+            return []
+    
+    class InMemoryDocument:
+        def __init__(self, db, collection_name, doc_id):
+            self.db = db
+            self.collection_name = collection_name
+            self.id = doc_id
+            
+            # Initialize if not exists
+            if collection_name not in self.db.data:
+                self.db.data[collection_name] = {}
+        
+        def set(self, data):
+            if self.collection_name == 'chats':
+                self.db.data['chats'][self.id] = data
+                # Initialize messages collection for this chat
+                if self.id not in self.db.data['messages']:
+                    self.db.data['messages'][self.id] = []
+            else:
+                # Handle message collections
+                parent_id = self.collection_name.split('/')[1]  # Should be chat_id
+                if parent_id not in self.db.data['messages']:
+                    self.db.data['messages'][parent_id] = []
+                
+                # Add message with some default timestamp
+                data['timestamp'] = datetime.datetime.now()
+                self.db.data['messages'][parent_id].append({
+                    'id': self.id,
+                    **data
+                })
+        
+        def get(self):
+            # For chat document
+            if self.collection_name == 'chats' and self.id in self.db.data['chats']:
+                return InMemoryDocSnapshot(self.id, self.db.data['chats'][self.id])
+            return InMemoryDocSnapshot(self.id, {})
+        
+        def update(self, data):
+            if self.collection_name == 'chats' and self.id in self.db.data['chats']:
+                self.db.data['chats'][self.id].update(data)
+        
+        def collection(self, subcollection_name):
+            return InMemoryCollection(self.db, f"{self.collection_name}/{self.id}/{subcollection_name}")
+    
+    class InMemoryDocSnapshot:
+        def __init__(self, doc_id, data):
+            self.id = doc_id
+            self._data = data
+            self.exists = bool(data)
+        
+        def to_dict(self):
+            return self._data
+    
+    # Create an instance of our in-memory database
+    db = InMemoryDB()
+    logging.warning("Using in-memory storage instead of Firestore")
 
 @app.route('/')
 def index():
@@ -50,7 +155,7 @@ def chat():
             try:
                 db.collection('chats').document(new_chat_id).set({
                     'name': 'Nouveau chat',
-                    'created_at': firestore.SERVER_TIMESTAMP,
+                    'created_at': FIRESTORE.SERVER_TIMESTAMP,
                     'ephemeral': False
                 })
                 logging.debug(f"Created new chat with ID: {new_chat_id}")
