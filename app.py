@@ -2,7 +2,11 @@ import os
 import uuid
 import logging
 import datetime
+import json
 from flask import Flask, render_template, request, jsonify, session
+
+# Import sandbox module
+from sandbox import execute_code, format_result_as_html
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -260,6 +264,60 @@ def rename_chat():
         'success': True,
         'name': new_name
     })
+
+@app.route('/sandbox')
+def sandbox():
+    """Render the sandbox page."""
+    return render_template('sandbox.html')
+
+@app.route('/execute_code', methods=['POST'])
+def sandbox_execute():
+    """Execute code in the sandbox and return the result."""
+    data = request.json
+    code = data.get('code', '')
+    
+    if not code:
+        return jsonify({'error': 'No code provided'}), 400
+    
+    # Execute the code in the sandbox
+    result = execute_code(code)
+    
+    # Store the code and result in session history
+    if 'code_history' not in session:
+        session['code_history'] = []
+    
+    # Add to history with a timestamp and ID
+    code_entry = {
+        'id': str(uuid.uuid4()),
+        'code': code,
+        'result': result,
+        'timestamp': get_timestamp()
+    }
+    session['code_history'].append(code_entry)
+    session.modified = True
+    
+    # Limit history to last 10 entries
+    if len(session['code_history']) > 10:
+        session['code_history'] = session['code_history'][-10:]
+        session.modified = True
+    
+    # Add HTML formatted result
+    result['html_result'] = format_result_as_html(result)
+    
+    return jsonify(result)
+
+@app.route('/code_history', methods=['GET', 'DELETE'])
+def code_history():
+    """Get or clear the code execution history."""
+    if 'code_history' not in session:
+        session['code_history'] = []
+    
+    if request.method == 'DELETE':
+        session['code_history'] = []
+        session.modified = True
+        return jsonify({'success': True})
+    
+    return jsonify(session['code_history'])
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

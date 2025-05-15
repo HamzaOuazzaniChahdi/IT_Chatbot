@@ -1,0 +1,325 @@
+/* Sandbox specific styles */
+
+/* General layout */
+.sandbox-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+}
+
+/* Header styles */
+.sandbox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.back-link {
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: var(--text-primary);
+}
+
+.sandbox-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.sandbox-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.sandbox-button:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.sandbox-button.primary {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.sandbox-button.primary:hover {
+    background-color: var(--color-primary-hover);
+}
+
+/* Main content area */
+.sandbox-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Editor section */
+.editor-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.editor-header, .output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.editor-header h2, .output-header h2 {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.small-button {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.6rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    border: none;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.small-button:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--text-primary);
+}
+
+.code-editor {
+    flex: 1;
+    overflow: auto;
+}
+
+/* CodeMirror customization */
+.CodeMirror {
+    height: 100%;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+}
+
+/* Output section */
+.output-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.output-display {
+    flex: 1;
+    padding: 1rem;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.output-placeholder {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-secondary);
+}
+
+.output-placeholder i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* Sandbox output styles */
+.sandbox-output, .sandbox-variables, .sandbox-error {
+    margin-bottom: 1.5rem;
+}
+
+.sandbox-output h3, .sandbox-variables h3, .sandbox-error h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.sandbox-output pre {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+}
+
+.variable-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+}
+
+.variable-table th, .variable-table td {
+    padding: 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.variable-table th {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.error-type {
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+.error-traceback {
+    background-color: rgba(255, 107, 107, 0.1);
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    color: #ff6b6b;
+}
+
+/* History section */
+.history-section {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    max-height: 30vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.history-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.history-item {
+    padding: 0.75rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.history-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.history-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.history-timestamp {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.history-code {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.history-status {
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+}
+
+.history-status.success {
+    background-color: rgba(52, 211, 153, 0.2);
+    color: #34d399;
+}
+
+.history-status.error {
+    background-color: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+}
+
+/* Header button styles for main chat page */
+.header-button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 18px;
+    cursor: pointer;
+    transition: color var(--transition-speed);
+    margin-right: 10px;
+}
+
+.header-button:hover {
+    color: var(--text-primary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sandbox-content {
+        flex-direction: column;
+    }
+    
+    .editor-section, .output-section {
+        flex: none;
+        height: 50vh;
+        border-right: none;
+    }
+    
+    .editor-section {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}

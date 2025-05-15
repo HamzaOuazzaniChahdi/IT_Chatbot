@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Sandbox - Hamza.OC</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sandbox.css') }}">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CodeMirror for code editor -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/theme/dracula.min.css">
+</head>
+<body>
+    <!-- Main container -->
+    <div class="sandbox-container">
+        <!-- Header -->
+        <div class="sandbox-header">
+            <div class="header-left">
+                <a href="/" class="back-link"><i class="fas fa-arrow-left"></i></a>
+                <h1>Code Sandbox</h1>
+            </div>
+            <div class="header-actions">
+                <button id="clearButton" class="sandbox-button" title="Effacer le code">
+                    <i class="fas fa-eraser"></i> Effacer
+                </button>
+                <button id="runButton" class="sandbox-button primary" title="Exécuter le code">
+                    <i class="fas fa-play"></i> Exécuter
+                </button>
+            </div>
+        </div>
+        
+        <!-- Main content area -->
+        <div class="sandbox-content">
+            <!-- Code editor section -->
+            <div class="editor-section">
+                <div class="editor-header">
+                    <h2>Python Code</h2>
+                    <div class="editor-options">
+                        <button id="insertExampleButton" class="small-button" title="Insérer un exemple">
+                            <i class="fas fa-lightbulb"></i> Exemple
+                        </button>
+                    </div>
+                </div>
+                <div id="codeEditor" class="code-editor"></div>
+            </div>
+            
+            <!-- Output section -->
+            <div class="output-section">
+                <div class="output-header">
+                    <h2>Résultat</h2>
+                    <button id="clearOutputButton" class="small-button" title="Effacer les résultats">
+                        <i class="fas fa-trash"></i> Effacer
+                    </button>
+                </div>
+                <div id="outputDisplay" class="output-display">
+                    <div class="output-placeholder">
+                        <i class="fas fa-code"></i>
+                        <p>Exécutez du code pour voir les résultats ici</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- History section -->
+        <div class="history-section">
+            <div class="history-header">
+                <h2>Historique d'exécution</h2>
+                <button id="clearHistoryButton" class="small-button" title="Effacer l'historique">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+            <div id="historyItems" class="history-items">
+                <!-- History items will be added here dynamically -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/mode/python/python.min.js"></script>
+    <script src="{{ url_for('static', filename='js/sandbox.js') }}"></script>
+</body>
+</html>

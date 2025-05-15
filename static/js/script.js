@@ -70,6 +70,14 @@ function setupEventListeners() {
     // Confirmation modal buttons
     confirmYesButton.addEventListener('click', () => handleConfirmation('Y'));
     confirmNoButton.addEventListener('click', () => handleConfirmation('N'));
+    
+    // Sandbox button
+    const sandboxButton = document.getElementById('sandboxButton');
+    if (sandboxButton) {
+        sandboxButton.addEventListener('click', () => {
+            window.location.href = '/sandbox';
+        });
+    }
 }
 
 // Toggle sidebar visibility
